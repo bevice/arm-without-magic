@@ -4,9 +4,13 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.5)
 #Этот дифайн требуется для CMSIS и HAL
 ADD_DEFINITIONS(-DSTM32F103xB)
 
-set(CMAKE_VERBOSE_MAKEFILE NO)
+# Если непонятно что происходит - включаем, cmake будет выплевывать в консоль все команды со всеми параметрами
+#set(CMAKE_VERBOSE_MAKEFILE YES)
+
+# Подключаем тулчейн для stm32
 include(stm32.cmake)
 
+# Название проекта
 PROJECT(arm-nomagic-stm32)
 
 # Добавим пути к заголовкам CMSIS

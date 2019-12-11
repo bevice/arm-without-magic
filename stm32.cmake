@@ -15,6 +15,7 @@ set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
 # Другие полезные пути
 SET(TOOLCHAIN_BIN_DIR ${TOOLCHAIN_DIR}/bin)
 
+# если Windows - добавим суффикс .exe ко всем командам. Иначе cmake может их не найти
 if (WIN32)
     SET(EXE_SUFFIX ".exe")
 else ()
@@ -23,7 +24,6 @@ endif ()
 # Компиляторы
 SET(CMAKE_C_COMPILER "${TOOLCHAIN_BIN_DIR}/arm-none-eabi-gcc${EXE_SUFFIX}" CACHE INTERNAL "")
 SET(CMAKE_CXX_COMPILER "${TOOLCHAIN_BIN_DIR}/arm-none-eabi-g++${EXE_SUFFIX}" CACHE INTERNAL "")
-SET(CMAKE_ASM_COMPILER "${TOOLCHAIN_BIN_DIR}/arm-none-eabi-gcc${EXE_SUFFIX}" CACHE INTERNAL "")
 
 # Чтобы линковщик пока не линковал лишее - мы будем вызывать таким образом.
 SET(CMAKE_LINKER "${TOOLCHAIN_BIN_DIR}/arm-none-eabi-ld${EXE_SUFFIX}" CACHE INTERNAL "")
@@ -37,7 +37,7 @@ SET(CMAKE_OBJCOPY "${TOOLCHAIN_BIN_DIR}/arm-none-eabi-objcopy${EXE_SUFFIX}" CACH
 SET(CMAKE_OBJDUMP "${TOOLCHAIN_BIN_DIR}/arm-none-eabi-objdump${EXE_SUFFIX}" CACHE INTERNAL "")
 SET(CMAKE_SIZE "${TOOLCHAIN_BIN_DIR}/arm-none-eabi-size${EXE_SUFFIX}" CACHE INTERNAL "")
 
-# Пути, где что искать
+# Пути, где что искать, нам не нужно лишнего.
 set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
