@@ -1,4 +1,3 @@
-target extended localhost:3333
-monitor reset halt
+target extended ${DEBUGGER_HOST}:${DEBUGGER_PORT}
 load
-monitor reset init
+${DEBUGGER_INIT_COMMAND}

@@ -13,6 +13,31 @@ include(stm32.cmake)
 # Название проекта
 PROJECT(arm-nomagic-stm32)
 
+
+
+## Настройки GDB
+SET(DEBUGGER_HOST localhost)
+
+## Настройки GDB
+
+if(GDB_SERVER)
+	string(TOUPPER ${GDB_SERVER} GDB_SERVER)
+	if(${GDB_SERVER} STREQUAL "JLINK" OR ${GDB_SERVER} STREQUAL "J-LINK")
+		SET(DEBUGGER_PORT 2331) # Default port for jLink GDB Server
+		set(DEBUGGER_INIT_COMMAND "monitor reset")
+		message(STATUS "Using jLink as GDB server")
+	elseif(${GDB_SERVER} STREQUAL "OPENOCD" OR ${GDB_SERVER} STREQUAL "OOCD" )
+		SET(DEBUGGER_PORT 3333) # Default port for OpenOCD GDB Server
+		set(DEBUGGER_INIT_COMMAND "monitor reset init")
+		message(STATUS "Using Open On-Chip Debugger as GDB server")
+	else()
+		SET(DEBUGGER_PORT 3333) # Unknown GDB 
+		set(DEBUGGER_INIT_COMMAND "monitor reset")
+		message(WARNING "Unknown GDB Server, plz configure DEBUGGER_PORT and other settings ")
+	endif()
+endif()
+
+
 # Добавим пути к заголовкам CMSIS
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/drivers/CMSIS/Include/
                     ${CMAKE_CURRENT_SOURCE_DIR}/drivers/CMSIS/Device/ST/STM32F1xx/Include/)
@@ -54,3 +79,19 @@ ADD_CUSTOM_TARGET(show-symbols
 	COMMAND ${CMAKE_NM} --print-size -a -n ${CMAKE_PROJECT_NAME}.elf
 	DEPENDS ${CMAKE_PROJECT_NAME}.elf
 	)
+
+
+if(GDB_SERVER)
+	# Сделаем .gdbinit
+	configure_file(${PROJECT_SOURCE_DIR}/_gdbinit .gdbinit)
+
+	# команда make debug 
+	# GDB с недавних пор не загружает .gdbinit по текущему пути, поэтому разрешим запуск таким не хитрым образом
+	add_custom_target(debug
+		COMMAND ${COMMAND_GDB} ${CMAKE_PROJECT_NAME}.elf -iex "set auto-load safe-path ${CMAKE_CURRENT_BINARY_DIR}"
+		DEPENDS ${CMAKE_PROJECT_NAME}.elf
+		)
+endif()
+
+
+
