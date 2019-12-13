@@ -31,6 +31,7 @@ SET(CMAKE_C_LINK_EXECUTABLE "<CMAKE_LINKER> <LINK_FLAGS> <OBJECTS> -o <TARGET> <
 
 # Флаги компиляторов, тут можно подкрутить
 SET(CMAKE_C_FLAGS "-Wall -mcpu=cortex-m3 -mthumb -std=gnu99" CACHE INTERNAL "c compiler flags")
+SET(CMAKE_C_FLAGS_DEBUG "-Wall -g3 -mcpu=cortex-m3 -mthumb -std=gnu99" CACHE INTERNAL "c compiler flags")
 
 # objcopy и objdump для создания хексов и бинариков
 SET(CMAKE_OBJCOPY "${TOOLCHAIN_BIN_DIR}/arm-none-eabi-objcopy${EXE_SUFFIX}" CACHE INTERNAL "")
