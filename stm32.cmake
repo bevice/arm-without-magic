@@ -37,6 +37,7 @@ SET(CMAKE_C_FLAGS_DEBUG "-Wall -g3 -mcpu=cortex-m3 -mthumb -std=gnu99" CACHE INT
 SET(CMAKE_OBJCOPY "${TOOLCHAIN_BIN_DIR}/arm-none-eabi-objcopy${EXE_SUFFIX}" CACHE INTERNAL "")
 SET(CMAKE_OBJDUMP "${TOOLCHAIN_BIN_DIR}/arm-none-eabi-objdump${EXE_SUFFIX}" CACHE INTERNAL "")
 SET(CMAKE_SIZE "${TOOLCHAIN_BIN_DIR}/arm-none-eabi-size${EXE_SUFFIX}" CACHE INTERNAL "")
+SET(CMAKE_NM "${TOOLCHAIN_BIN_DIR}/arm-none-eabi-nm${EXE_SUFFIX}" CACHE INTERNAL "")
 
 # Пути, где что искать, нам не нужно лишнего.
 set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
