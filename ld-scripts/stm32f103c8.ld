@@ -2,41 +2,46 @@ OUTPUT_FORMAT("elf32-littlearm", "elf32-littlearm", "elf32-littlearm")
 OUTPUT_ARCH(arm)
 MEMORY
 {
-    ROM  (rx) : ORIGIN = 0x08000000, LENGTH = 64K
-    RAM (rwx) : ORIGIN = 0x20000000, LENGTH = 20K
+    ROM  (rx) : ORIGIN = 0x08000000, LENGTH = 64K  /* Объявляем регион ROM */
+    RAM (rwx) : ORIGIN = 0x20000000, LENGTH = 20K  /* Объявляем регион RAM */
 }
 
 SECTIONS
 {
-    . =  ORIGIN(ROM);
-    .isr_vector :
+    .isr_vector ORIGIN(ROM):  /* Объявляем выходную секцию .isr_vector, адрес укажем явно: начало региона ROM */
     {
-        KEEP(*(.isr_vector))
-    }
-    . = ALIGN(16);
-
-    .text :
-    {
-        *(.text*);
+        KEEP(*(.isr_vector))  /* помещаем сюда все символы с атрибутом section(".isr_vector") */
     }
 
-    . = ALIGN(4);
-    __data_rom__ = .;
-    . += SIZEOF(.data);
-
-    . = ORIGIN(RAM);
-
-    .common ALIGN(4) (NOLOAD) :
+    .text ALIGN(16):        /* Объявляем выходную секцию .text, попросим компоновщик выровнять секцию кратно 16 байт */
     {
-        *(COMMON)
+        *(.text*);          /* Развернем сюда все символы с атрибутом section начинающимся со слова .text */
     }
 
-    .bss (NOLOAD): {
+    .data_rom ALIGN(4):     /* Выходная секция для значений инициализации данных из .data */
+    {
+       /* Создадим символ __data_rom__ с адресом равным текущему */
+        PROVIDE(__data_rom__ = .);   
+        /* Подвинем указатель на текущий адрес на размер выходной секции .data, она будет объявлена позже */
+        . += SIZEOF(.data);     
+    }
+    
+    
+    /* Секция для неинициализированных переменных, адрес - начало региона RAM
+       Тип NOLOAD, говорит компоновщику, что нужно только распределить адреса, данные нам не важны*/
+    .common ORIGIN(RAM) (NOLOAD) : 
+    {
+        *(COMMON*)                 
+    }
+
+    .bss ALIGN(4) (NOLOAD): {
         PROVIDE(__bss_start__ = .);
         *(.bss*)
         PROVIDE(__bss_end__ = .);
     }
 
+    /* Секция .data, для инициализированных переменных, 
+    оператор AT() назначает LMA для этой секции */
     .data ALIGN(4): AT(__data_rom__)
     {
         PROVIDE(__data_start__ = .);
@@ -44,6 +49,6 @@ SECTIONS
         PROVIDE(__data_end__ = .);
     } >RAM
 
-    PROVIDE(__data_lma__ = LOADADDR(.data));
+    /* Создадим символ __stack_top__ */
     PROVIDE(__stack_top__ = ORIGIN(RAM) + LENGTH(RAM));
 }
